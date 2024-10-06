@@ -35,6 +35,7 @@ public class OutputService {
             String messageText = task.getMessage();
             SendMessage sendMessage = new SendMessage(chatId, messageText);
             telegramBot.execute(sendMessage);
+            logger.info("Notification has been send");
         });
     }
 }

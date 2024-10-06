@@ -38,6 +38,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 Message message = update.message();
                 SendMessage sendMessage = inputService.manageUpdateMessage(message);
                 telegramBot.execute(sendMessage);
+                logger.info("Processing update succeeded");
             });
         } catch (Exception e) {
             logger.error("Processing update failed");

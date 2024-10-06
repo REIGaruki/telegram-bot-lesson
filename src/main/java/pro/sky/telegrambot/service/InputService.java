@@ -21,6 +21,11 @@ public class InputService {
 
     @Value("${telegram.bot.starting-message}")
     private String startMessage;
+    //telegram.bot.starting-message=/start
+
+    @Value("${telegram.bot.pattern.regexp}")
+    private String regex;
+    //telegram.bot.pattern.regexp=(\\d{2}\\.\\d{2}\\.\\d{4}\\s\\d{2}:\\d{2})(\\s+)(.+)
 
     private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
@@ -30,20 +35,27 @@ public class InputService {
     private SendMessage sendStartMessage(Message message) {
         logger.info("Processing start message");
         String name = message.chat().firstName() + " " + message.chat().lastName();
-        String messageText = "Привет, " + name + "!";
+        String messageText = "Привет, " + name + "!\n" +
+                "Отправьте сообщение формата \n\"дд.мм.гггг чч:мм текст-сообщения\"\n" +
+                "и получите в назначенную дату и время сообщение с текстом";
         return new SendMessage(message.chat().id(), messageText);
     }
 
     private SendMessage sendNotificationTaskMessage(Message message) {
         logger.info("Processing notification task");
         String scheduledDateTimeText = message.text().substring(0, 16);
-        String scheduledMessage = message.text().substring(17);
+        String messageText;
         LocalDateTime scheduledDateTime = LocalDateTime.parse(
                 scheduledDateTimeText,
                 DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
-        repository.save(new NotificationTask(message.chat().id(), scheduledMessage, scheduledDateTime));
-        String messageText = "Ожидайте уведомление \"" + scheduledMessage
-                + "\" в назначенное время: " + scheduledDateTimeText;
+        if (LocalDateTime.now().isBefore(scheduledDateTime)) {
+            String scheduledMessage = message.text().substring(17);
+            repository.save(new NotificationTask(message.chat().id(), scheduledMessage, scheduledDateTime));
+             messageText = "Ожидайте уведомление \"" + scheduledMessage
+                    + "\" в назначенное время: " + scheduledDateTimeText;
+        } else {
+            messageText = "Вы опоздали! Назначенное время уже прошло!";
+        }
         return new SendMessage(message.chat().id(), messageText);
     }
 
@@ -52,7 +64,7 @@ public class InputService {
     }
 
     public SendMessage manageUpdateMessage(Message message) {
-        Pattern pattern = Pattern.compile("(\\d{2}\\.\\d{2}\\.\\d{4}\\s\\d{2}:\\d{2})(\\s+)(.+)");
+        Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(message.text());
         if (message.text().equals(startMessage)) {
             return sendStartMessage(message);

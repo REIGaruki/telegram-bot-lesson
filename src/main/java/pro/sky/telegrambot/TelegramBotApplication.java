@@ -15,7 +15,7 @@ public class TelegramBotApplication {
 	@Autowired
 	private OutputService outputService;
 
-	@Scheduled(cron = "0 0/1 * * * *")
+	@Scheduled(cron = "${spring.application.cron}")
 	public void notifyOnDate() {
 		outputService.notifyOnDate();
 	}
