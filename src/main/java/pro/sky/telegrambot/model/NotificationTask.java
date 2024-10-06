@@ -10,7 +10,7 @@ import java.util.Objects;
 public class NotificationTask {
     @Id
     @GeneratedValue
-    private Long id;
+    private Integer id;
 
     private Long chatId;
 
@@ -22,7 +22,13 @@ public class NotificationTask {
 
     }
 
-    public Long getId() {
+    public NotificationTask(Long chatId, String message, LocalDateTime notificationDateTime) {
+        this.chatId = chatId;
+        this.message = message;
+        this.notificationDateTime = notificationDateTime;
+    }
+
+    public Integer getId() {
         return id;
     }
 
