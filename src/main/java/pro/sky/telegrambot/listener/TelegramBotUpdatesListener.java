@@ -55,10 +55,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     LocalDateTime sheduledDateTime = LocalDateTime.parse(
                             scheduledDateTimeText,
                             DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
-                    String messageText = scheduledDateTimeText + ' ' + scheduledMessage;
                     repository.save(new NotificationTask(chatId, scheduledMessage, sheduledDateTime));
-                    SendMessage sendMessage = new SendMessage(chatId, messageText);
-                    telegramBot.execute(sendMessage);
                 }
             });
         } catch (Exception e) {
