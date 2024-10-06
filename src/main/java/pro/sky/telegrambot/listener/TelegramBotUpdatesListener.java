@@ -2,6 +2,7 @@ package pro.sky.telegrambot.listener;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
+import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.slf4j.Logger;
@@ -27,17 +28,25 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     @Override
     public int process(List<Update> updates) {
-        updates.forEach(update -> {
-            logger.info("Processing update: {}", update);
-            // Process your updates here
-            if (update.message().text().equals("/start")) {
-                long chatId = update.message().chat().id();
-                String messageText = "Hello!";
-                SendMessage sendMessage = new SendMessage(chatId, messageText);
-                telegramBot.execute(sendMessage);
-            }
-        });
-        return UpdatesListener.CONFIRMED_UPDATES_ALL;
+        try {
+            updates.forEach(update -> {
+                logger.info("Processing update: {}", update);
+                // Process your updates here
+                if (update.message().text().equals("/start")) {
+                    Chat chat = update.message().chat();
+                    long chatId = chat.id();
+                    String name = chat.firstName() + " " + chat.lastName();
+                    String messageText = "Привет, " + name + "!";
+                    SendMessage sendMessage = new SendMessage(chatId, messageText);
+                    telegramBot.execute(sendMessage);
+                }
+            });
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        finally {
+            return UpdatesListener.CONFIRMED_UPDATES_ALL;
+        }
     }
 
 }
