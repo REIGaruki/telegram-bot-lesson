@@ -26,7 +26,7 @@ public class TelegramBotUpdatesManager {
     private String regex;
     //telegram.bot.pattern.regexp=(\\d{2}\\.\\d{2}\\.\\d{4}\\s\\d{2}:\\d{2})(\\s+)(.+)
 
-    private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesManager.class);
+    private final Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesManager.class);
 
     @Autowired
     private NotificationRepository repository;
