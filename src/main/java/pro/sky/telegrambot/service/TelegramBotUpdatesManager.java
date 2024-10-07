@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import pro.sky.telegrambot.listener.TelegramBotUpdatesListener;
 import pro.sky.telegrambot.model.NotificationTask;
 import pro.sky.telegrambot.repository.NotificationRepository;
 
@@ -17,7 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class InputService {
+public class TelegramBotUpdatesManager {
 
     @Value("${telegram.bot.starting-message}")
     private String startMessage;
@@ -27,7 +26,7 @@ public class InputService {
     private String regex;
     //telegram.bot.pattern.regexp=(\\d{2}\\.\\d{2}\\.\\d{4}\\s\\d{2}:\\d{2})(\\s+)(.+)
 
-    private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
+    private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesManager.class);
 
     @Autowired
     private NotificationRepository repository;

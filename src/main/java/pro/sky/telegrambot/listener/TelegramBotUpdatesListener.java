@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pro.sky.telegrambot.service.InputService;
+import pro.sky.telegrambot.service.TelegramBotUpdatesManager;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -23,7 +23,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private TelegramBot telegramBot;
 
     @Autowired
-    private InputService inputService;
+    private TelegramBotUpdatesManager telegramBotUpdatesManager;
 
     @PostConstruct
     public void init() {
@@ -36,15 +36,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             updates.forEach(update -> {
                 logger.info("Processing update: {}", update);
                 Message message = update.message();
-                SendMessage sendMessage = inputService.manageUpdateMessage(message);
+                SendMessage sendMessage = telegramBotUpdatesManager.manageUpdateMessage(message);
                 telegramBot.execute(sendMessage);
                 logger.info("Processing update succeeded");
             });
         } catch (Exception e) {
-            logger.error("Processing update failed");
-            throw new RuntimeException(e);
-        }
-        finally {
+            logger.error("Processing update failed: {}", e);
+        } finally {
             return UpdatesListener.CONFIRMED_UPDATES_ALL;
         }
     }
